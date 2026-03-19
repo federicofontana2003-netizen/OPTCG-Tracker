@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OPTCG LOCK</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
-        :root { --primary: #c62828; --gold: #f59e0b; --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --border: #334155; }
+        :root { --primary: #c62828; --gold: #f59e0b; --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; }
         body { font-family: sans-serif; margin: 0; background: var(--bg); color: var(--text); }
         
-        /* SCHERMATA BLOCCO FORZATA (TUA ORIGINALE) */
+        /* SCHERMATA BLOCCO FORZATA */
         #guard-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; display: flex; align-items: center; justify-content: center;
@@ -20,27 +18,7 @@
         input { padding: 15px; border-radius: 8px; border: none; width: 200px; font-size: 1.2rem; text-align: center; margin: 20px 0; }
         button { padding: 15px 30px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
         
-        #main-app { display: none; padding: 20px; max-width: 1000px; margin: auto; }
-
-        /* STILE CLOUD AGGIUNTO */
-        .header-app { background: var(--primary); padding: 15px; text-align: center; border-radius: 10px; border-bottom: 4px solid var(--gold); margin-bottom: 20px; }
-        .tabs { display: flex; gap: 5px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 12px; background: #334155; color: white; border: none; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { background: var(--gold); color: black; }
-        .format-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
-        .format-btn { padding: 8px 15px; background: transparent; border: 1px solid var(--border); color: white; cursor: pointer; }
-        .format-btn.active { color: var(--gold); border-color: var(--gold); }
-        .page { display: none; background: var(--card); padding: 20px; border-radius: 10px; }
-        .page.active { display: block; }
-        select, .btn-cloud { width: 100%; padding: 12px; margin: 10px 0; background: #0b1120; color: white; border: 1px solid var(--border); border-radius: 5px; }
-        .btn-cloud { background: var(--primary); font-weight: bold; border: none; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 10px; border: 1px solid var(--border); text-align: left; font-size: 0.8rem; }
-        th { color: var(--gold); }
-        .an-grid { display: grid; grid-template-columns: 220px 1fr; gap: 15px; }
-        .an-list { background: #0b1120; height: 400px; overflow-y: auto; border: 1px solid var(--border); }
-        .l-item { padding: 8px; border-bottom: 1px solid #1e293b; cursor: pointer; font-size: 0.8rem; }
-        .l-item.sel { background: var(--primary); }
+        #main-app { display: none; padding: 20px; }
     </style>
 </head>
 <body>
@@ -56,75 +34,18 @@
 </div>
 
 <div id="main-app">
-    <div class="header-app"><h1>🏴‍☠️ OPTCG ANALYTICS CLOUD</h1></div>
-
-    <div class="tabs">
-        <button class="tab-btn active" onclick="nav('ins', this)">INSERISCI</button>
-        <button class="tab-btn" onclick="nav('db', this)">DATABASE</button>
-        <button class="tab-btn" onclick="nav('rnk', this)">RANKING</button>
-        <button class="tab-btn" onclick="nav('an', this)">ANALISI</button>
-    </div>
-
-    <div class="format-bar">
-        <button class="format-btn active" onclick="setF('std', this)">STANDARD</button>
-        <button class="format-btn" onclick="setF('etc', this)">ETERNO</button>
-    </div>
-
-    <div id="ins" class="page active">
-        <label>P1 (Tu)</label><select id="p1" class="drop"></select>
-        <label>P2 (Opponent)</label><select id="p2" class="drop"></select>
-        <div style="display:flex; gap:10px;">
-            <select id="tt"><option>1st</option><option>2nd</option></select>
-            <select id="rr"><option>Win</option><option>Loss</option></select>
-        </div>
-        <button class="btn-cloud" onclick="save()">SALVA NEL CLOUD</button>
-    </div>
-
-    <div id="db" class="page">
-        <table><thead><tr><th>Leader</th><th>W-L</th><th>%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="db-b"></tbody></table>
-    </div>
-
-    <div id="rnk" class="page">
-        <table><thead><tr><th>#</th><th>Leader</th><th>Match</th><th>WR%</th></tr></thead><tbody id="rnk-b"></tbody></table>
-    </div>
-
-    <div id="an" class="page">
-        <div class="an-grid">
-            <div class="an-list" id="side"></div>
-            <div>
-                <div id="an-h" style="padding:10px; background:#0b1120; margin-bottom:10px; color:var(--gold)">Seleziona leader</div>
-                <table><thead><tr><th>Vs</th><th>M</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="an-b"></tbody></table>
-            </div>
-        </div>
-    </div>
-
-    <hr style="margin-top:40px; border: 0.5px solid #334155;">
-    <button onclick="localStorage.removeItem('my_secure_psw'); location.reload();" style="background:#444; color: white; padding: 10px; border: none; border-radius: 5px; cursor:pointer;">RESET PASSWORD</button>
+    <h1 style="color:var(--gold)">Benvenuto nel tuo Cloud</h1>
+    <p>Se vedi questa scritta, il sistema è sbloccato.</p>
+    <button onclick="localStorage.removeItem('my_secure_psw'); location.reload();" style="background:#444">RESET PASSWORD</button>
+    
+    <hr>
+    <div id="debug-info">Accesso eseguito correttamente.</div>
 </div>
 
 <script>
-    // Configurazione Firebase (I tuoi dati)
-    const firebaseConfig = {
-        apiKey: "AIzaSyCLoFyNXaHvtbnCfH40o8qqwjy0RO95NgQ",
-        authDomain: "optcg-tracker-225de.firebaseapp.com",
-        projectId: "optcg-tracker-225de",
-        storageBucket: "optcg-tracker-225de.firebasedatabase.app",
-        messagingSenderId: "397158081205",
-        appId: "1:397158081205:web:8d5b5385df720d1aaad4fc",
-        databaseURL: "https://optcg-tracker-225de-default-rtdb.europe-west1.firebasedatabase.app"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-
-    let allMatches = [];
-    let curF = 'std';
-    let selAn = null;
-
-    const stdL = ["Shanks (OP09-001)", "Rob Lucci (OP07-079)", "Enel (OP05-098)", "Bonney (OP07-019)", "Blackbeard (OP09-081)", "Boa Hancock (OP07-038)"].sort();
-    const etcL = ["Edward.Newgate (OP02-001)", "Portgas.D.Ace (OP03-001)", "Trafalgar Law (ST10-001)", "Doflamingo (OP01-060)", "Katakuri (OP03-099)", "Zoro (OP01-001)"].sort();
-
-    // LOGICA LOCK (IDENTICA ALLA TUA)
+    // Forza il controllo all'avvio
     const savedPsw = localStorage.getItem('my_secure_psw');
+    
     if(!savedPsw) {
         document.getElementById('status-txt').innerText = "PRIMA CONFIGURAZIONE";
         document.getElementById('desc-txt').innerText = "Scegli una password per il tuo cloud.";
@@ -133,90 +54,26 @@
     function unlock() {
         const input = document.getElementById('psw-input').value;
         const currentStored = localStorage.getItem('my_secure_psw');
+
         if(!currentStored) {
+            // Caso: Prima configurazione
             if(input.length < 3) return alert("Password troppo corta!");
             localStorage.setItem('my_secure_psw', input);
             alert("Password impostata! Non dimenticarla.");
             enter();
         } else {
-            if(input === currentStored) enter();
-            else alert("Password sbagliata!");
+            // Caso: Login normale
+            if(input === currentStored) {
+                enter();
+            } else {
+                alert("Password sbagliata!");
+            }
         }
     }
 
     function enter() {
         document.getElementById('guard-overlay').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        updateLists();
-        database.ref('matches').on('value', (s) => {
-            allMatches = s.val() ? Object.values(s.val()) : [];
-            render();
-        });
-    }
-
-    // LOGICA CLOUD
-    function nav(id, b) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); b.classList.add('active');
-    }
-
-    function setF(f, b) {
-        curF = f; document.querySelectorAll('.format-btn').forEach(t => t.classList.remove('active'));
-        b.classList.add('active'); selAn = null; updateLists(); render();
-    }
-
-    function updateLists() {
-        const list = curF === 'std' ? stdL : etcL;
-        const drops = document.querySelectorAll('.drop');
-        const side = document.getElementById('side');
-        drops.forEach(d => { d.innerHTML = ''; list.forEach(l => d.add(new Option(l, l))); });
-        side.innerHTML = '';
-        list.forEach(l => {
-            let r = document.createElement('div'); r.className = 'l-item' + (selAn===l?' sel':'');
-            r.innerText = l; r.onclick = () => { selAn = l; render(); }; side.appendChild(r);
-        });
-    }
-
-    function save() {
-        const m = { p1: document.getElementById('p1').value, p2: document.getElementById('p2').value, t: document.getElementById('tt').value, r: document.getElementById('rr').value, f: curF };
-        database.ref('matches').push(m).then(() => alert("Cloud Aggiornato!"));
-    }
-
-    function render() {
-        const filtered = allMatches.filter(m => m.f === curF);
-        let s = {};
-        filtered.forEach(m => {
-            const up = (l, o, r, t) => {
-                if(!s[l]) s[l] = {w:0, l:0, w1:0, l1:0, w2:0, l2:0, mu:{}};
-                r === 'Win' ? s[l].w++ : s[l].l++;
-                if(t === '1st') r==='Win'?s[l].w1++:s[l].l1++; else r==='Win'?s[l].w2++:s[l].l2++;
-                if(!s[l].mu[o]) s[l].mu[o] = {w:0, l:0, w1:0, l1:0, w2:0, l2:0};
-                r === 'Win' ? s[l].mu[o].w++ : s[l].mu[o].l++;
-                if(t === '1st') r==='Win'?s[l].mu[o].w1++:s[l].mu[o].l1++; else r==='Win'?s[l].mu[o].w2++:s[l].mu[o].l2++;
-            };
-            up(m.p1, m.p2, m.r, m.t);
-            up(m.p2, m.p1, (m.r==='Win'?'Loss':'Win'), (m.t==='1st'?'2nd':'1st'));
-        });
-
-        const dbB = document.getElementById('db-b'); dbB.innerHTML = '';
-        Object.entries(s).forEach(([n, d]) => {
-            dbB.innerHTML += `<tr><td>${n}</td><td>${d.w}-${d.l}</td><td>${(d.w/(d.w+d.l)*100).toFixed(1)}%</td><td>${(d.w1/(d.w1+d.l1)*100||0).toFixed(0)}%</td><td>${(d.w2/(d.w2+d.l2)*100||0).toFixed(0)}%</td></tr>`;
-        });
-
-        const rB = document.getElementById('rnk-b'); rB.innerHTML = '';
-        Object.entries(s).sort((a,b)=>(b[1].w/(b[1].w+b[1].l))-(a[1].w/(a[1].w+a[1].l))).slice(0,10).forEach(([n,d], i) => {
-            rB.innerHTML += `<tr><td>${i+1}</td><td>${n}</td><td>${d.w+d.l}</td><td>${(d.w/(d.w+d.l)*100).toFixed(1)}%</td></tr>`;
-        });
-
-        if(selAn && s[selAn]) {
-            const d = s[selAn]; document.getElementById('an-h').innerText = selAn;
-            const aB = document.getElementById('an-b'); aB.innerHTML = '';
-            Object.entries(d.mu).forEach(([o, m]) => {
-                aB.innerHTML += `<tr><td>${o}</td><td>${m.w+m.l}</td><td>${(m.w/(m.w+m.l)*100).toFixed(1)}%</td><td>${m.w1}-${m.l1}</td><td>${m.w2}-${m.l2}</td></tr>`;
-            });
-        }
-        updateLists();
     }
 </script>
 </body>
