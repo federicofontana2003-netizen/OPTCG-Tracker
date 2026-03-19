@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OPTCG PRO ANALYTICS - Secure</title>
+    <title>OPTCG SECURE ANALYTICS</title>
     <style>
         :root { 
             --primary: #c62828; --gold: #f59e0b; --bg: #0f172a; 
             --card: #1e293b; --text: #f1f5f9; --border: #334155; 
             --danger: #b91c1c; --secondary: #475569; --success: #16a34a;
         }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); line-height: 1.5; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); line-height: 1.5; }
         
-        /* Schermata di Login */
+        /* Overlay di Sicurezza */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: flex; align-items: center; justify-content: center;
-            z-index: 9999; flex-direction: column; padding: 20px; text-align: center;
+            z-index: 10000; flex-direction: column; padding: 20px;
         }
-        .login-box { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--border); width: 100%; max-width: 350px; }
-        .login-input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 6px; border: 1px solid var(--border); background: #0b1120; color: white; text-align: center; font-size: 1.2rem; }
+        .login-box { background: var(--card); padding: 30px; border-radius: 15px; border: 2px solid var(--primary); width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .login-input { width: 80%; padding: 12px; margin: 15px 0; border-radius: 6px; border: 1px solid var(--border); background: #0b1120; color: white; text-align: center; font-size: 1.2rem; }
 
-        /* Resto del layout precedente */
-        .container { max-width: 1200px; margin: auto; padding: 15px; display: none; } /* Nascosto di base */
+        .container { max-width: 1200px; margin: auto; padding: 15px; display: none; }
         header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 15px; }
         h1 { color: var(--gold); margin: 0; font-size: 1.6rem; }
         .main-tabs, .sub-tabs { display: flex; gap: 8px; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px; overflow-x: auto; }
@@ -45,7 +44,7 @@
         .stat-grid { display: flex; gap: 10px; margin-bottom: 20px; }
         .stat-box { background: #0f172a; padding: 10px; border-radius: 8px; flex: 1; text-align: center; border: 1px solid var(--border); }
         .stat-box p { font-size: 1.2rem; font-weight: bold; margin: 5px 0 0 0; color: var(--gold); }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
         .wr-high { color: #34d399; } .wr-low { color: #f87171; }
         .admin-zone { margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--border); }
         .cloud-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
@@ -55,14 +54,14 @@
 
 <div id="login-screen">
     <div class="login-box">
-        <h2 id="login-title" style="color: var(--gold); margin-top: 0;">Benvenuto</h2>
-        <p id="login-msg" style="font-size: 0.9rem; color: #94a3b8;">Imposta una password per proteggere i tuoi dati.</p>
-        <input type="password" id="psw-input" class="login-input" placeholder="Password">
-        <button class="btn-main" onclick="checkAuth()">ENTRA</button>
+        <h2 id="login-status" style="color: var(--gold);">SICUREZZA</h2>
+        <p id="login-desc" style="font-size: 0.8rem; color: #94a3b8;">Inserisci la password per sbloccare.</p>
+        <input type="password" id="psw-field" class="login-input" placeholder="Password...">
+        <button class="btn-main" onclick="validate()">SBLOCCA</button>
     </div>
 </div>
 
-<div id="app-content" class="container">
+<div id="app" class="container">
     <header><h1>🏴‍☠️ OPTCG ANALYTICS</h1></header>
 
     <div class="main-tabs">
@@ -79,9 +78,9 @@
 
     <div id="insert" class="page active">
         <div style="max-width:500px; margin:auto;">
-            <h3 id="formato-label" style="color:var(--gold); text-align:center; margin-bottom:20px;">MODALITÀ: STANDARD</h3>
-            <div style="margin-bottom:15px;"><label>Tuo Leader (P1)</label><select id="deck1" class="leader-select" style="width:100%; padding:12px; margin-top:5px;"></select></div>
-            <div style="margin-bottom:15px;"><label>Avversario (P2)</label><select id="deck2" class="leader-select" style="width:100%; padding:12px; margin-top:5px;"></select></div>
+            <h3 id="formato-label" style="color:var(--gold); text-align:center;">MODALITÀ: STANDARD</h3>
+            <div><label>Tuo Leader (P1)</label><select id="deck1" class="leader-select" style="width:100%; padding:12px; margin:5px 0 15px 0;"></select></div>
+            <div><label>Avversario (P2)</label><select id="deck2" class="leader-select" style="width:100%; padding:12px; margin:5px 0 15px 0;"></select></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
                 <div><label>Turno P1</label><select id="turn" style="width:100%; padding:12px;"><option value="1st">1st</option><option value="2nd">2nd</option></select></div>
                 <div><label>Esito P1</label><select id="result" style="width:100%; padding:12px;"><option value="Win">Win</option><option value="Loss">Loss</option></select></div>
@@ -93,22 +92,17 @@
                     <button class="sub-btn" onclick="exportData()" style="background:var(--success)">📤 ESPORTA</button>
                     <button class="sub-btn" onclick="importData()" style="background:var(--gold); color:black;">📥 IMPORTA</button>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <button class="sub-btn" onclick="deleteLastMatch()" style="background:var(--secondary); font-size:0.7rem;">CANC. ULTIMO</button>
-                    <button class="sub-btn" onclick="resetData()" style="background:var(--danger); font-size:0.7rem;">RESET TUTTO</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                    <button class="sub-btn" onclick="deleteLastMatch()" style="background:var(--secondary); font-size:0.6rem;">CANC. ULTIMO</button>
+                    <button class="sub-btn" onclick="doLogout()" style="background:#475569; font-size:0.6rem;">🔒 LOGOUT</button>
+                    <button class="sub-btn" onclick="resetData()" style="background:var(--danger); font-size:0.6rem;">RESET</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="stats" class="page">
-        <div class="table-container"><table><thead><tr><th>Leader</th><th>W-L</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="statsBody"></tbody></table></div>
-    </div>
-
-    <div id="ranking" class="page">
-        <div class="table-container"><table><thead><tr><th>#</th><th>Leader</th><th>Match</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
-    </div>
-
+    <div id="stats" class="page"><div class="table-container"><table><thead><tr><th>Leader</th><th>W-L</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="statsBody"></tbody></table></div></div>
+    <div id="ranking" class="page"><div class="table-container"><table><thead><tr><th>#</th><th>Leader</th><th>Match</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="rankingBody"></tbody></table></div></div>
     <div id="analysis" class="page">
         <div class="analysis-layout">
             <div class="analysis-sidebar">
@@ -119,11 +113,7 @@
                 <div id="an-placeholder" style="text-align:center; padding-top:50px; color:#64748b;"><h3>Seleziona Leader</h3></div>
                 <div id="an-content" style="display:none;">
                     <h2 id="an-title" style="color:var(--gold); margin:0 0 15px 0;">-</h2>
-                    <div class="stat-grid">
-                        <div class="stat-box"><h4>Tot</h4><p id="an-total">-</p></div>
-                        <div class="stat-box"><h4>1st</h4><p id="an-1st">-</p></div>
-                        <div class="stat-box"><h4>2nd</h4><p id="an-2nd">-</p></div>
-                    </div>
+                    <div class="stat-grid"><div class="stat-box"><h4>Tot</h4><p id="an-total">-</p></div><div class="stat-box"><h4>1st</h4><p id="an-1st">-</p></div><div class="stat-box"><h4>2nd</h4><p id="an-2nd">-</p></div></div>
                     <div class="table-container"><table><thead><tr><th>Vs</th><th>M</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="an-mup-body"></tbody></table></div>
                 </div>
             </div>
@@ -132,41 +122,54 @@
 </div>
 
 <script>
-    /* LOGICA SICUREZZA */
-    const storedPsw = localStorage.getItem('optcg_password');
-    if(!storedPsw) {
-        document.getElementById('login-title').innerText = "Benvenuto!";
-        document.getElementById('login-msg').innerText = "Crea una password per proteggere i tuoi dati.";
-    } else {
-        document.getElementById('login-title').innerText = "Login Richiesto";
-        document.getElementById('login-msg').innerText = "Inserisci la password per accedere al database.";
+    // --- GESTIONE PASSWORD ---
+    const KEY_PSW = 'optcg_sys_psw';
+    const KEY_AUTH = 'optcg_sys_auth';
+
+    function initSecurity() {
+        const hasPsw = localStorage.getItem(KEY_PSW);
+        if(!hasPsw) {
+            document.getElementById('login-status').innerText = "CONFIGURAZIONE";
+            document.getElementById('login-desc').innerText = "Crea la tua password di accesso.";
+        }
+        // Se è già autenticato in questa sessione
+        if(sessionStorage.getItem(KEY_AUTH) === 'true') {
+            showApp();
+        }
     }
 
-    function checkAuth() {
-        const input = document.getElementById('psw-input').value;
-        const currentStored = localStorage.getItem('optcg_password');
-        
-        if(!currentStored) {
-            if(input.length < 4) return alert("Scegli una password di almeno 4 caratteri");
-            localStorage.setItem('optcg_password', input);
-            unlockApp();
+    function validate() {
+        const val = document.getElementById('psw-field').value;
+        const saved = localStorage.getItem(KEY_PSW);
+
+        if(!saved) {
+            if(val.length < 4) return alert("Minimo 4 caratteri");
+            localStorage.setItem(KEY_PSW, val);
+            sessionStorage.setItem(KEY_AUTH, 'true');
+            showApp();
         } else {
-            if(input === currentStored) {
-                unlockApp();
+            if(val === saved) {
+                sessionStorage.setItem(KEY_AUTH, 'true');
+                showApp();
             } else {
                 alert("Password errata!");
             }
         }
     }
 
-    function unlockApp() {
+    function doLogout() {
+        sessionStorage.removeItem(KEY_AUTH);
+        location.reload();
+    }
+
+    function showApp() {
         document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app-content').style.display = 'block';
+        document.getElementById('app').style.display = 'block';
         updateLeaderSelects();
         refresh();
     }
 
-    /* RESTO DEL CODICE PRECEDENTE (INVARIATO) */
+    // --- LOGICA CORE ---
     let currentFormat = 'standard';
     let currentMainTab = 'insert';
     let selectedLeaderAn = null;
@@ -188,6 +191,8 @@
     function selectAn(n, el) { selectedLeaderAn = n; document.querySelectorAll('.leader-item').forEach(i => i.classList.remove('selected')); el.classList.add('selected'); refresh(); }
     function updateAnalysisDetail(n, allStats) { document.getElementById('an-placeholder').style.display = 'none'; document.getElementById('an-content').style.display = 'block'; document.getElementById('an-title').innerText = n; const d = allStats[n]; if(!d) return; document.getElementById('an-total').innerText = (d.w/(d.w+d.l)*100).toFixed(1) + "%"; document.getElementById('an-1st').innerText = (d.w1/(d.w1+d.l1)*100||0).toFixed(0) + "%"; document.getElementById('an-2nd').innerText = (d.w2/(d.w2+d.l2)*100||0).toFixed(0) + "%"; document.getElementById('an-mup-body').innerHTML = Object.entries(d.mu).map(([o, m]) => { const mWR = (m.w/(m.w+m.l))*100; return `<tr><td>${o}</td><td>${m.w+m.l}</td><td class="${mWR>=50?'wr-high':'wr-low'}">${mWR.toFixed(1)}%</td><td>${(m.w1/(m.w1+m.l1)*100||0).toFixed(0)}%</td><td>${(m.w2/(m.w2+m.l2)*100||0).toFixed(0)}%</td></tr>`; }).join(''); }
     function filterAnList() { let v = document.getElementById('search-an').value.toLowerCase(); document.querySelectorAll('.leader-item').forEach(i => i.style.display = i.innerText.toLowerCase().includes(v) ? 'block' : 'none'); }
+
+    window.onload = initSecurity;
 </script>
 </body>
 </html>
