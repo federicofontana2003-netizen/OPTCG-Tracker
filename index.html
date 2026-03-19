@@ -3,259 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OPTCG ANALYTICS - GITHUB STYLE</title>
+    <title>OPTCG LOCK</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
         :root { --primary: #c62828; --gold: #f59e0b; --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --border: #334155; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: var(--bg); color: var(--text); }
+        body { font-family: sans-serif; margin: 0; background: var(--bg); color: var(--text); }
         
-        /* Schermata Login */
-        #lock { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .lock-box { background: var(--card); padding: 40px; border-radius: 15px; border: 2px solid var(--primary); text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        /* SCHERMATA BLOCCO FORZATA (TUA ORIGINALE) */
+        #guard-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; align-items: center; justify-content: center;
+            z-index: 99999; flex-direction: column; text-align: center;
+        }
+        .guard-box { background: var(--card); padding: 40px; border-radius: 20px; border: 2px solid var(--primary); }
+        input { padding: 15px; border-radius: 8px; border: none; width: 200px; font-size: 1.2rem; text-align: center; margin: 20px 0; }
+        button { padding: 15px 30px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        
+        #main-app { display: none; padding: 20px; max-width: 1000px; margin: auto; }
 
-        .header { background: var(--primary); padding: 20px; text-align: center; border-bottom: 4px solid var(--gold); }
-        .header h1 { margin: 0; font-size: 1.8rem; letter-spacing: 2px; }
-
-        .container { max-width: 1100px; margin: auto; padding: 20px; display: none; }
-
-        /* Menu Principale */
-        .main-tabs { display: flex; gap: 8px; margin-bottom: 25px; }
-        .tab-btn { flex: 1; padding: 15px; border: none; background: #334155; color: white; font-weight: bold; cursor: pointer; border-radius: 5px; transition: 0.3s; }
-        .tab-btn.active { background: var(--primary); box-shadow: 0 0 15px rgba(198, 40, 40, 0.4); }
-
-        /* Switch Formato */
-        .format-bar { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; }
-        .format-btn { padding: 10px 25px; border: 2px solid transparent; background: transparent; color: #94a3b8; font-weight: bold; cursor: pointer; border-radius: 5px; }
-        .format-btn.active { border-color: var(--gold); color: var(--gold); background: #0b1120; }
-
-        .page { display: none; animation: fadeIn 0.4s; }
+        /* STILE CLOUD AGGIUNTO */
+        .header-app { background: var(--primary); padding: 15px; text-align: center; border-radius: 10px; border-bottom: 4px solid var(--gold); margin-bottom: 20px; }
+        .tabs { display: flex; gap: 5px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 12px; background: #334155; color: white; border: none; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: var(--gold); color: black; }
+        .format-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .format-btn { padding: 8px 15px; background: transparent; border: 1px solid var(--border); color: white; cursor: pointer; }
+        .format-btn.active { color: var(--gold); border-color: var(--gold); }
+        .page { display: none; background: var(--card); padding: 20px; border-radius: 10px; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Form e Input */
-        .card-form { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid var(--border); max-width: 600px; margin: auto; }
-        select, input { width: 100%; padding: 14px; margin: 10px 0 20px 0; background: #0b1120; color: white; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
-        .btn-save { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 1.1rem; }
-        .btn-save:hover { background: #b71c1c; }
-
-        /* Tabelle */
-        .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; background: #0b1120; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
-        th { background: #1e293b; color: var(--gold); text-transform: uppercase; font-size: 0.85rem; }
-
-        /* Analisi Layout */
-        .analysis-grid { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
-        .sidebar { background: #0b1120; border: 1px solid var(--border); border-radius: 10px; height: 550px; overflow-y: auto; }
-        .l-item { padding: 12px 15px; border-bottom: 1px solid #1e293b; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
-        .l-item:hover { background: #1e293b; color: var(--gold); }
-        .l-item.selected { background: var(--primary); color: white; font-weight: bold; }
+        select, .btn-cloud { width: 100%; padding: 12px; margin: 10px 0; background: #0b1120; color: white; border: 1px solid var(--border); border-radius: 5px; }
+        .btn-cloud { background: var(--primary); font-weight: bold; border: none; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px; border: 1px solid var(--border); text-align: left; font-size: 0.8rem; }
+        th { color: var(--gold); }
+        .an-grid { display: grid; grid-template-columns: 220px 1fr; gap: 15px; }
+        .an-list { background: #0b1120; height: 400px; overflow-y: auto; border: 1px solid var(--border); }
+        .l-item { padding: 8px; border-bottom: 1px solid #1e293b; cursor: pointer; font-size: 0.8rem; }
+        .l-item.sel { background: var(--primary); }
     </style>
 </head>
 <body>
 
-<div id="lock">
-    <div class="lock-box">
-        <h2 style="color:var(--gold)">OPTCG CLOUD ACCESS</h2>
-        <input type="password" id="p-check" placeholder="Inserisci Password">
-        <button class="btn-save" onclick="checkAuth()">ENTRA NEL DATABASE</button>
+<div id="guard-overlay">
+    <div class="guard-box">
+        <h1 id="status-txt" style="color: var(--gold);">SISTEMA PROTETTO</h1>
+        <p id="desc-txt">Inserisci password per accedere</p>
+        <input type="password" id="psw-input" placeholder="****">
+        <br>
+        <button onclick="unlock()">ACCEDI</button>
     </div>
 </div>
 
-<div class="header"><h1>🏆 OPTCG ANALYTICS</h1></div>
+<div id="main-app">
+    <div class="header-app"><h1>🏴‍☠️ OPTCG ANALYTICS CLOUD</h1></div>
 
-<div id="app" class="container">
-    <div class="main-tabs">
-        <button class="tab-btn active" onclick="nav('insert', this)">INSERISCI</button>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="nav('ins', this)">INSERISCI</button>
         <button class="tab-btn" onclick="nav('db', this)">DATABASE</button>
-        <button class="tab-btn" onclick="nav('rank', this)">RANKING</button>
-        <button class="tab-btn" onclick="nav('analysis', this)">ANALISI</button>
+        <button class="tab-btn" onclick="nav('rnk', this)">RANKING</button>
+        <button class="tab-btn" onclick="nav('an', this)">ANALISI</button>
     </div>
 
     <div class="format-bar">
-        <button class="format-btn active" onclick="setF('standard', this)">STANDARD (OP09)</button>
-        <button class="format-btn" onclick="setF('eterno', this)">ETERNO (ALL SETS)</button>
+        <button class="format-btn active" onclick="setF('std', this)">STANDARD</button>
+        <button class="format-btn" onclick="setF('etc', this)">ETERNO</button>
     </div>
 
-    <div id="insert" class="page active">
-        <div class="card-form">
-            <label>Tuo Leader (P1)</label><select id="sel-p1" class="l-drop"></select>
-            <label>Avversario (P2)</label><select id="sel-p2" class="l-drop"></select>
-            <div style="display:flex; gap:15px;">
-                <div style="flex:1;"><label>Turno</label><select id="sel-t"><option value="1st">1st Turn</option><option value="2nd">2nd Turn</option></select></div>
-                <div style="flex:1;"><label>Esito</label><select id="sel-r"><option value="Win">Vittoria</option><option value="Loss">Sconfitta</option></select></div>
-            </div>
-            <button class="btn-save" onclick="saveToCloud()">SALVA NEL CLOUD</button>
-            <p id="cloud-info" style="text-align:center; font-size:0.75rem; color:#64748b; margin-top:15px;">Dati sincronizzati con Realtime Database</p>
+    <div id="ins" class="page active">
+        <label>P1 (Tu)</label><select id="p1" class="drop"></select>
+        <label>P2 (Opponent)</label><select id="p2" class="drop"></select>
+        <div style="display:flex; gap:10px;">
+            <select id="tt"><option>1st</option><option>2nd</option></select>
+            <select id="rr"><option>Win</option><option>Loss</option></select>
         </div>
+        <button class="btn-cloud" onclick="save()">SALVA NEL CLOUD</button>
     </div>
 
     <div id="db" class="page">
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Leader</th><th>W-L</th><th>Win Rate</th><th>1st Turn</th><th>2nd Turn</th></tr></thead>
-                <tbody id="db-list"></tbody>
-            </table>
-        </div>
+        <table><thead><tr><th>Leader</th><th>W-L</th><th>%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="db-b"></tbody></table>
     </div>
 
-    <div id="rank" class="page">
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>#</th><th>Leader</th><th>Match</th><th>Win Rate</th></tr></thead>
-                <tbody id="rank-list"></tbody>
-            </table>
-        </div>
+    <div id="rnk" class="page">
+        <table><thead><tr><th>#</th><th>Leader</th><th>Match</th><th>WR%</th></tr></thead><tbody id="rnk-b"></tbody></table>
     </div>
 
-    <div id="analysis" class="page">
-        <div class="analysis-grid">
-            <div class="sidebar" id="side-menu"></div>
-            <div class="content">
-                <div id="an-head" style="margin-bottom:20px; padding:20px; background:var(--card); border-radius:10px; border-left:5px solid var(--gold);">
-                    <h3>Seleziona un leader a sinistra</h3>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>Matchup VS</th><th>M</th><th>Win Rate</th><th>1st</th><th>2nd</th></tr></thead>
-                        <tbody id="an-list"></tbody>
-                    </table>
-                </div>
+    <div id="an" class="page">
+        <div class="an-grid">
+            <div class="an-list" id="side"></div>
+            <div>
+                <div id="an-h" style="padding:10px; background:#0b1120; margin-bottom:10px; color:var(--gold)">Seleziona leader</div>
+                <table><thead><tr><th>Vs</th><th>M</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="an-b"></tbody></table>
             </div>
         </div>
     </div>
+
+    <hr style="margin-top:40px; border: 0.5px solid #334155;">
+    <button onclick="localStorage.removeItem('my_secure_psw'); location.reload();" style="background:#444; color: white; padding: 10px; border: none; border-radius: 5px; cursor:pointer;">RESET PASSWORD</button>
 </div>
 
 <script>
-    // Configurazione Firebase
+    // Configurazione Firebase (I tuoi dati)
     const firebaseConfig = {
         apiKey: "AIzaSyCLoFyNXaHvtbnCfH40o8qqwjy0RO95NgQ",
         authDomain: "optcg-tracker-225de.firebaseapp.com",
         projectId: "optcg-tracker-225de",
-        storageBucket: "optcg-tracker-225de.firebasestorage.app",
+        storageBucket: "optcg-tracker-225de.firebasedatabase.app",
         messagingSenderId: "397158081205",
         appId: "1:397158081205:web:8d5b5385df720d1aaad4fc",
         databaseURL: "https://optcg-tracker-225de-default-rtdb.europe-west1.firebasedatabase.app"
     };
     firebase.initializeApp(firebaseConfig);
-    const dbCloud = firebase.database();
+    const database = firebase.database();
 
-    let allData = [];
-    let curF = 'standard';
+    let allMatches = [];
+    let curF = 'std';
     let selAn = null;
 
-    // Liste Leader divise
-    const listStandard = ["Shanks (OP09-001)", "Rob Lucci (OP07-079)", "Enel (OP05-098)", "Bonney (OP07-019)", "Boa Hancock (OP07-038)", "Blackbeard (OP09-081)", "Luffy (OP05-060)"].sort();
-    const listEterno = ["Edward.Newgate (OP02-001)", "Portgas.D.Ace (OP03-001)", "Trafalgar Law (ST10-001)", "Doflamingo (OP01-060)", "Katakuri (OP03-099)", "Zoro (OP01-001)", "Whitebeard (OP02-001)"].sort();
+    const stdL = ["Shanks (OP09-001)", "Rob Lucci (OP07-079)", "Enel (OP05-098)", "Bonney (OP07-019)", "Blackbeard (OP09-081)", "Boa Hancock (OP07-038)"].sort();
+    const etcL = ["Edward.Newgate (OP02-001)", "Portgas.D.Ace (OP03-001)", "Trafalgar Law (ST10-001)", "Doflamingo (OP01-060)", "Katakuri (OP03-099)", "Zoro (OP01-001)"].sort();
 
-    function checkAuth() {
-        const p = document.getElementById('p-check').value;
-        const s = localStorage.getItem('fb_psw');
-        if(!s) { localStorage.setItem('fb_psw', p); start(); }
-        else if(p === s) start();
-        else alert("Sbagliata!");
+    // LOGICA LOCK (IDENTICA ALLA TUA)
+    const savedPsw = localStorage.getItem('my_secure_psw');
+    if(!savedPsw) {
+        document.getElementById('status-txt').innerText = "PRIMA CONFIGURAZIONE";
+        document.getElementById('desc-txt').innerText = "Scegli una password per il tuo cloud.";
     }
 
-    function start() {
-        document.getElementById('lock').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        updateUILists();
-        dbCloud.ref('matches').on('value', (s) => {
-            allData = s.val() ? Object.values(s.val()) : [];
+    function unlock() {
+        const input = document.getElementById('psw-input').value;
+        const currentStored = localStorage.getItem('my_secure_psw');
+        if(!currentStored) {
+            if(input.length < 3) return alert("Password troppo corta!");
+            localStorage.setItem('my_secure_psw', input);
+            alert("Password impostata! Non dimenticarla.");
+            enter();
+        } else {
+            if(input === currentStored) enter();
+            else alert("Password sbagliata!");
+        }
+    }
+
+    function enter() {
+        document.getElementById('guard-overlay').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        updateLists();
+        database.ref('matches').on('value', (s) => {
+            allMatches = s.val() ? Object.values(s.val()) : [];
             render();
         });
     }
 
-    function updateUILists() {
-        const activeList = curF === 'standard' ? listStandard : listEterno;
-        const drops = document.querySelectorAll('.l-drop');
-        const side = document.getElementById('side-menu');
-        
-        drops.forEach(d => {
-            d.innerHTML = '';
-            activeList.forEach(l => d.add(new Option(l, l)));
-        });
-
-        side.innerHTML = '';
-        activeList.forEach(l => {
-            let div = document.createElement('div');
-            div.className = 'l-item' + (selAn === l ? ' selected' : '');
-            div.innerText = l;
-            div.onclick = () => { selAn = l; render(); };
-            side.appendChild(div);
-        });
-    }
-
-    function saveToCloud() {
-        const m = {
-            p1: document.getElementById('sel-p1').value,
-            p2: document.getElementById('sel-p2').value,
-            t: document.getElementById('sel-t').value,
-            r: document.getElementById('sel-r').value,
-            f: curF,
-            ts: Date.now()
-        };
-        dbCloud.ref('matches').push(m).then(() => alert("Inviato al Cloud!"));
-    }
-
+    // LOGICA CLOUD
     function nav(id, b) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        b.classList.add('active');
+        document.getElementById(id).classList.add('active'); b.classList.add('active');
     }
 
     function setF(f, b) {
-        curF = f;
-        document.querySelectorAll('.format-btn').forEach(t => t.classList.remove('active'));
-        b.classList.add('active');
-        selAn = null;
-        updateUILists();
-        render();
+        curF = f; document.querySelectorAll('.format-btn').forEach(t => t.classList.remove('active'));
+        b.classList.add('active'); selAn = null; updateLists(); render();
+    }
+
+    function updateLists() {
+        const list = curF === 'std' ? stdL : etcL;
+        const drops = document.querySelectorAll('.drop');
+        const side = document.getElementById('side');
+        drops.forEach(d => { d.innerHTML = ''; list.forEach(l => d.add(new Option(l, l))); });
+        side.innerHTML = '';
+        list.forEach(l => {
+            let r = document.createElement('div'); r.className = 'l-item' + (selAn===l?' sel':'');
+            r.innerText = l; r.onclick = () => { selAn = l; render(); }; side.appendChild(r);
+        });
+    }
+
+    function save() {
+        const m = { p1: document.getElementById('p1').value, p2: document.getElementById('p2').value, t: document.getElementById('tt').value, r: document.getElementById('rr').value, f: curF };
+        database.ref('matches').push(m).then(() => alert("Cloud Aggiornato!"));
     }
 
     function render() {
-        const filtered = allData.filter(m => m.f === curF);
+        const filtered = allMatches.filter(m => m.f === curF);
         let s = {};
-
         filtered.forEach(m => {
             const up = (l, o, r, t) => {
                 if(!s[l]) s[l] = {w:0, l:0, w1:0, l1:0, w2:0, l2:0, mu:{}};
                 r === 'Win' ? s[l].w++ : s[l].l++;
-                if(t === '1st') r === 'Win' ? s[l].w1++ : s[l].l1++;
-                else r === 'Win' ? s[l].w2++ : s[l].l2++;
+                if(t === '1st') r==='Win'?s[l].w1++:s[l].l1++; else r==='Win'?s[l].w2++:s[l].l2++;
                 if(!s[l].mu[o]) s[l].mu[o] = {w:0, l:0, w1:0, l1:0, w2:0, l2:0};
                 r === 'Win' ? s[l].mu[o].w++ : s[l].mu[o].l++;
-                t === '1st' ? (r==='Win' ? s[l].mu[o].w1++ : s[l].mu[o].l1++) : (r==='Win' ? s[l].mu[o].w2++ : s[l].mu[o].l2++);
+                if(t === '1st') r==='Win'?s[l].mu[o].w1++:s[l].mu[o].l1++; else r==='Win'?s[l].mu[o].w2++:s[l].mu[o].l2++;
             };
             up(m.p1, m.p2, m.r, m.t);
             up(m.p2, m.p1, (m.r==='Win'?'Loss':'Win'), (m.t==='1st'?'2nd':'1st'));
         });
 
-        const dbBody = document.getElementById('db-list');
-        dbBody.innerHTML = '';
+        const dbB = document.getElementById('db-b'); dbB.innerHTML = '';
         Object.entries(s).forEach(([n, d]) => {
-            const wr = (d.w/(d.w+d.l)*100).toFixed(1);
-            dbBody.innerHTML += `<tr><td><b>${n}</b></td><td>${d.w}-${d.l}</td><td>${wr}%</td><td>${(d.w1/(d.w1+d.l1)*100||0).toFixed(0)}%</td><td>${(d.w2/(d.w2+d.l2)*100||0).toFixed(0)}%</td></tr>`;
+            dbB.innerHTML += `<tr><td>${n}</td><td>${d.w}-${d.l}</td><td>${(d.w/(d.w+d.l)*100).toFixed(1)}%</td><td>${(d.w1/(d.w1+d.l1)*100||0).toFixed(0)}%</td><td>${(d.w2/(d.w2+d.l2)*100||0).toFixed(0)}%</td></tr>`;
         });
 
-        const rankBody = document.getElementById('rank-list');
-        rankBody.innerHTML = '';
-        Object.entries(s).sort((a,b) => (b[1].w/(b[1].w+b[1].l)) - (a[1].w/(a[1].w+a[1].l))).slice(0,10).forEach(([n,d], i) => {
-            rankBody.innerHTML += `<tr><td>${i+1}</td><td>${n}</td><td>${d.w+d.l}</td><td>${(d.w/(d.w+d.l)*100).toFixed(1)}%</td></tr>`;
+        const rB = document.getElementById('rnk-b'); rB.innerHTML = '';
+        Object.entries(s).sort((a,b)=>(b[1].w/(b[1].w+b[1].l))-(a[1].w/(a[1].w+a[1].l))).slice(0,10).forEach(([n,d], i) => {
+            rB.innerHTML += `<tr><td>${i+1}</td><td>${n}</td><td>${d.w+d.l}</td><td>${(d.w/(d.w+d.l)*100).toFixed(1)}%</td></tr>`;
         });
 
         if(selAn && s[selAn]) {
-            const d = s[selAn];
-            document.getElementById('an-head').innerHTML = `<h3>${selAn}</h3><p>Win Rate Globale: ${(d.w/(d.w+d.l)*100).toFixed(1)}% (${d.w}W - ${d.l}L)</p>`;
-            const anBody = document.getElementById('an-list');
-            anBody.innerHTML = '';
-            Object.entries(d.mu).forEach(([opp, m]) => {
-                anBody.innerHTML += `<tr><td>${opp}</td><td>${m.w+m.l}</td><td>${(m.w/(m.w+m.l)*100).toFixed(1)}%</td><td>${m.w1}-${m.l1}</td><td>${m.w2}-${m.l2}</td></tr>`;
+            const d = s[selAn]; document.getElementById('an-h').innerText = selAn;
+            const aB = document.getElementById('an-b'); aB.innerHTML = '';
+            Object.entries(d.mu).forEach(([o, m]) => {
+                aB.innerHTML += `<tr><td>${o}</td><td>${m.w+m.l}</td><td>${(m.w/(m.w+m.l)*100).toFixed(1)}%</td><td>${m.w1}-${m.l1}</td><td>${m.w2}-${m.l2}</td></tr>`;
             });
         }
-        updateUILists();
+        updateLists();
     }
 </script>
 </body>
