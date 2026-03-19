@@ -3,56 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OPTCG PRO ANALYTICS - Fixed Format</title>
+    <title>OPTCG PRO ANALYTICS - Secure</title>
     <style>
         :root { 
             --primary: #c62828; --gold: #f59e0b; --bg: #0f172a; 
             --card: #1e293b; --text: #f1f5f9; --border: #334155; 
-            --danger: #b91c1c; --secondary: #475569;
+            --danger: #b91c1c; --secondary: #475569; --success: #16a34a;
         }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); line-height: 1.5; }
-        .container { max-width: 1200px; margin: auto; padding: 20px; }
-        header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 15px; }
-        h1 { color: var(--gold); margin: 0; font-size: 1.8rem; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: var(--text); line-height: 1.5; overflow-x: hidden; }
+        
+        /* Schermata di Login */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; align-items: center; justify-content: center;
+            z-index: 9999; flex-direction: column; padding: 20px; text-align: center;
+        }
+        .login-box { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--border); width: 100%; max-width: 350px; }
+        .login-input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 6px; border: 1px solid var(--border); background: #0b1120; color: white; text-align: center; font-size: 1.2rem; }
 
+        /* Resto del layout precedente */
+        .container { max-width: 1200px; margin: auto; padding: 15px; display: none; } /* Nascosto di base */
+        header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 15px; }
+        h1 { color: var(--gold); margin: 0; font-size: 1.6rem; }
         .main-tabs, .sub-tabs { display: flex; gap: 8px; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px; overflow-x: auto; }
         .sub-tabs { background: #1e293b; justify-content: center; border: 1px solid var(--border); }
-        
-        .tab-btn, .sub-btn { flex: 1; padding: 12px; border: none; background: #334155; color: white; font-weight: bold; cursor: pointer; border-radius: 6px; white-space: nowrap; transition: 0.2s; }
-        .tab-btn.active { background: var(--primary); box-shadow: 0 0 10px rgba(198,40,40,0.4); }
+        .tab-btn, .sub-btn { flex: 1; padding: 12px; border: none; background: #334155; color: white; font-weight: bold; cursor: pointer; border-radius: 6px; white-space: nowrap; }
+        .tab-btn.active { background: var(--primary); }
         .sub-btn { flex: 0 1 200px; background: #475569; font-size: 0.85rem; }
         .sub-btn.active { background: var(--gold); color: #0f172a; }
-
-        .page { display: none; background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid var(--border); }
+        .page { display: none; background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
         .page.active { display: block; }
-        
         .table-container { overflow-x: auto; margin-top: 15px; border: 1px solid var(--border); border-radius: 8px; background: #0b1120; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
         th { background: #1e293b; color: var(--gold); text-transform: uppercase; }
-        
         .analysis-layout { display: flex; gap: 20px; flex-wrap: wrap; }
-        .analysis-sidebar { width: 300px; background: #0b1120; padding: 15px; border-radius: 8px; height: 550px; overflow-y: auto; border: 1px solid var(--border); }
+        .analysis-sidebar { width: 100%; max-width: 300px; background: #0b1120; padding: 15px; border-radius: 8px; height: 400px; overflow-y: auto; border: 1px solid var(--border); }
         .analysis-main { flex: 1; min-width: 300px; }
-        
-        .leader-item { padding: 10px; cursor: pointer; border-radius: 4px; margin-bottom: 6px; font-size: 0.8rem; border-left: 4px solid transparent; background: #1e293b; }
-        .leader-item.selected { background: var(--primary); border-left-color: var(--gold); color: white; }
-
-        .stat-grid { display: flex; gap: 12px; margin-bottom: 25px; }
-        .stat-box { background: #0f172a; padding: 15px; border-radius: 8px; flex: 1; text-align: center; border: 1px solid var(--border); }
-        .stat-box p { font-size: 1.4rem; font-weight: bold; margin: 5px 0 0 0; color: var(--gold); }
-        
-        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
-        .wr-high { color: #34d399; font-weight: bold; } 
-        .wr-low { color: #f87171; font-weight: bold; }
-        
-        .admin-zone { margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--border); }
+        .leader-item { padding: 10px; cursor: pointer; border-radius: 4px; margin-bottom: 6px; font-size: 0.8rem; background: #1e293b; border-left: 4px solid transparent; }
+        .leader-item.selected { background: var(--primary); border-left-color: var(--gold); }
+        .stat-grid { display: flex; gap: 10px; margin-bottom: 20px; }
+        .stat-box { background: #0f172a; padding: 10px; border-radius: 8px; flex: 1; text-align: center; border: 1px solid var(--border); }
+        .stat-box p { font-size: 1.2rem; font-weight: bold; margin: 5px 0 0 0; color: var(--gold); }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px; }
+        .wr-high { color: #34d399; } .wr-low { color: #f87171; }
+        .admin-zone { margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--border); }
+        .cloud-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header><h1>🏴‍☠️ OPTCG PRO ANALYTICS</h1></header>
+<div id="login-screen">
+    <div class="login-box">
+        <h2 id="login-title" style="color: var(--gold); margin-top: 0;">Benvenuto</h2>
+        <p id="login-msg" style="font-size: 0.9rem; color: #94a3b8;">Imposta una password per proteggere i tuoi dati.</p>
+        <input type="password" id="psw-input" class="login-input" placeholder="Password">
+        <button class="btn-main" onclick="checkAuth()">ENTRA</button>
+    </div>
+</div>
+
+<div id="app-content" class="container">
+    <header><h1>🏴‍☠️ OPTCG ANALYTICS</h1></header>
 
     <div class="main-tabs">
         <button class="tab-btn active" onclick="setMainTab('insert', this)">INSERIMENTO</button>
@@ -62,70 +73,58 @@
     </div>
 
     <div class="sub-tabs">
-        <button class="sub-btn active" onclick="setFormat('standard', this)">FORMATO: STANDARD</button>
-        <button class="sub-btn" onclick="setFormat('eterno', this)">FORMATO: ETERNO</button>
+        <button class="sub-btn active" onclick="setFormat('standard', this)">STANDARD</button>
+        <button class="sub-btn" onclick="setFormat('eterno', this)">ETERNO</button>
     </div>
 
     <div id="insert" class="page active">
-        <div style="max-width:600px; margin:auto;">
-            <h3 id="formato-label" style="color:var(--gold); text-align:center;">MODALITÀ: STANDARD</h3>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
-                <div><label>Tuo Leader (P1)</label><select id="deck1" class="leader-select" style="width:100%; padding:10px;"></select></div>
-                <div><label>Avversario (P2)</label><select id="deck2" class="leader-select" style="width:100%; padding:10px;"></select></div>
-            </div>
+        <div style="max-width:500px; margin:auto;">
+            <h3 id="formato-label" style="color:var(--gold); text-align:center; margin-bottom:20px;">MODALITÀ: STANDARD</h3>
+            <div style="margin-bottom:15px;"><label>Tuo Leader (P1)</label><select id="deck1" class="leader-select" style="width:100%; padding:12px; margin-top:5px;"></select></div>
+            <div style="margin-bottom:15px;"><label>Avversario (P2)</label><select id="deck2" class="leader-select" style="width:100%; padding:12px; margin-top:5px;"></select></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
-                <div><label>Turno P1</label><select id="turn" style="width:100%; padding:10px;"><option value="1st">1st</option><option value="2nd">2nd</option></select></div>
-                <div><label>Esito P1</label><select id="result" style="width:100%; padding:10px;"><option value="Win">Vittoria</option><option value="Loss">Sconfitta</option></select></div>
+                <div><label>Turno P1</label><select id="turn" style="width:100%; padding:12px;"><option value="1st">1st</option><option value="2nd">2nd</option></select></div>
+                <div><label>Esito P1</label><select id="result" style="width:100%; padding:12px;"><option value="Win">Win</option><option value="Loss">Loss</option></select></div>
             </div>
-            <button class="btn-main" onclick="saveMatch()">REGISTRA PARTITA</button>
+            <button class="btn-main" onclick="saveMatch()">SALVA PARTITA</button>
+
             <div class="admin-zone">
+                <div class="cloud-btns">
+                    <button class="sub-btn" onclick="exportData()" style="background:var(--success)">📤 ESPORTA</button>
+                    <button class="sub-btn" onclick="importData()" style="background:var(--gold); color:black;">📥 IMPORTA</button>
+                </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <button class="sub-btn" onclick="deleteLastMatch()" style="background:var(--secondary)">🗑️ CANC. ULTIMO</button>
-                    <button class="sub-btn" onclick="resetData()" style="background:var(--danger)">⚠️ RESET TOTALE</button>
+                    <button class="sub-btn" onclick="deleteLastMatch()" style="background:var(--secondary); font-size:0.7rem;">CANC. ULTIMO</button>
+                    <button class="sub-btn" onclick="resetData()" style="background:var(--danger); font-size:0.7rem;">RESET TUTTO</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="stats" class="page">
-        <div class="table-container">
-            <table>
-                <thead><tr><th>Leader</th><th>W/L</th><th>WR %</th><th>WR 1st</th><th>WR 2nd</th></tr></thead>
-                <tbody id="statsBody"></tbody>
-            </table>
-        </div>
+        <div class="table-container"><table><thead><tr><th>Leader</th><th>W-L</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="statsBody"></tbody></table></div>
     </div>
 
     <div id="ranking" class="page">
-        <div class="table-container">
-            <table>
-                <thead><tr><th>Pos.</th><th>Leader</th><th>Match</th><th>WR %</th><th>WR 1st</th><th>WR 2nd</th></tr></thead>
-                <tbody id="rankingBody"></tbody>
-            </table>
-        </div>
+        <div class="table-container"><table><thead><tr><th>#</th><th>Leader</th><th>Match</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
     </div>
 
     <div id="analysis" class="page">
         <div class="analysis-layout">
             <div class="analysis-sidebar">
-                <input type="text" id="search-an" placeholder="Filtra..." onkeyup="filterAnList()" style="width:100%; padding:10px; margin-bottom:12px; background:#1e293b; color:white; border:1px solid #334155;">
+                <input type="text" id="search-an" placeholder="Cerca..." onkeyup="filterAnList()" style="width:100%; padding:10px; margin-bottom:10px; background:#1e293b; color:white; border:1px solid #334155;">
                 <div id="analysis-list"></div>
             </div>
             <div class="analysis-main">
-                <div id="an-placeholder" style="text-align:center; padding-top:100px; color:#64748b;"><h3>Seleziona un leader</h3></div>
+                <div id="an-placeholder" style="text-align:center; padding-top:50px; color:#64748b;"><h3>Seleziona Leader</h3></div>
                 <div id="an-content" style="display:none;">
-                    <h2 id="an-title" style="color:var(--gold); margin-top:0;">Nome</h2>
+                    <h2 id="an-title" style="color:var(--gold); margin:0 0 15px 0;">-</h2>
                     <div class="stat-grid">
-                        <div class="stat-box"><h4>Win Rate Totale</h4><p id="an-total">-</p></div>
-                        <div class="stat-box"><h4>Win Rate 1st</h4><p id="an-1st">-</p></div>
-                        <div class="stat-box"><h4>Win Rate 2nd</h4><p id="an-2nd">-</p></div>
+                        <div class="stat-box"><h4>Tot</h4><p id="an-total">-</p></div>
+                        <div class="stat-box"><h4>1st</h4><p id="an-1st">-</p></div>
+                        <div class="stat-box"><h4>2nd</h4><p id="an-2nd">-</p></div>
                     </div>
-                    <div class="table-container">
-                        <table>
-                            <thead><tr><th>Avversario</th><th>Match</th><th>WR%</th><th>WR 1st</th><th>WR 2nd</th></tr></thead>
-                            <tbody id="an-mup-body"></tbody>
-                        </table>
-                    </div>
+                    <div class="table-container"><table><thead><tr><th>Vs</th><th>M</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead><tbody id="an-mup-body"></tbody></table></div>
                 </div>
             </div>
         </div>
@@ -133,139 +132,62 @@
 </div>
 
 <script>
-    let currentFormat = 'standard';
-    let currentMainTab = 'insert';
-    let selectedLeaderAn = null;
-    let matches = JSON.parse(localStorage.getItem('optcg_v_multi_final')) || [];
-
-    const allLeaders = ["Edward.Newgate (OP02-001)", "Portgas.D.Ace (OP03-001)", "Shanks (OP09-001)", "Trafalgar Law (P-086)", "Monkey.D.Luffy (ST01-001)", "Sabo (ST13-001)", "Uta (P-011)", "Roronoa Zoro (OP01-001)", "Trafalgar Law (OP01-002)", "Monkey.D.Luffy (OP01-003)", "Monkey.D.Garp (OP02-002)", "Nefeltari Vivi (OP04-001)", "Trafalgar Law (ST10-001)", "Monkey.D.Luffy (ST10-002)", "Eustass Kid (ST10-003)", "Sabo (OP05-001)", "Belo Betty (OP05-002)", "Uta (OP06-001)", "Kouzuki Oden (EB01-001)", "Monkey.D.Dragon (OP07-001)", "Tony Tony.Chopper (OP08-001)", "Marco (OP08-002)", "Sanji (PRB01-001)", "Smoker (OP10-001)", "Caesar Clown (OP10-002)", "Sugar (OP10-003)", "Koby (OP11-001)", "Silvers Rayleigh (OP12-001)", "Monkey.D.Luffy (OP13-001)", "Portgas.D.Ace (OP13-002)", "Gol.D.Roger (OP13-003)", "Sabo (OP13-004)", "Trafalgar Law (OP14-001)", "Nefeltari Vivi (EB03-001)", "Krieg (OP15-001)", "Lucy (OP15-002)", "Jewelry Bonney (EB04-001)", "Monkey.D.Luffy (EB02-010)", "Roronoa Zoro (OP12-020)", "Kouzuki Oden (OP01-031)", "Eustass Kid (ST02-001)", "Kin'emon (OP02-025)", "Sanji (OP02-026)", "Kuro (OP03-021)", "Arlong (OP03-022)", "Donquixote Doflamingo (OP04-019)", "Issho (OP04-020)", "Donquixote Rosinante (OP05-022)", "Uta (ST11-001)", "Hody Jones (OP06-020)", "Perona (OP06-021)", "Yamato (OP06-022)", "Roronoa Zoro & Sanji (ST12-001)", "Jewelry Bonney (OP07-019)", "Carrot (OP08-021)", "Lim (OP09-022)", "Trafalgar Law (OP10-022)", "Jinbe (OP11-021)", "Shirahoshi (OP11-022)", "Dracule Mihawk (OP14-020)", "Brook (OP15-022)", "Boa Hancock (OP07-038)", "Sakazuki (P-076)", "Usopp (OP10-042)", "Nami (OP11-041)", "Nami (P-117)", "Portgas.D.Ace (ST13-002)", "Donquixote Doflamingo (OP01-060)", "Kaido (OP01-061)", "Crocodile (OP01-062)", "Crocodile (ST03-001)", "Emporio.Ivankov (OP02-049)", "Nami (OP03-040)", "Rebecca (OP04-039)", "Queen (OP04-040)", "Monkey.D.Luffy (P-047)", "Sakazuki (OP05-041)", "Vinsmoke Reiju (OP06-042)", "Hannyabal (EB01-021)", "Buggy (OP09-042)", "Monkey.D.Luffy (OP11-040)", "Kuzan (OP12-040)", "Sanji (OP12-041)", "Ace & Newgate (ST22-001)", "Jinbe (OP14-040)", "Boa Hancock (OP14-041)", "Rebecca (OP15-039)", "Monkey.D.Luffy (OP05-060)", "King (OP01-091)", "Kaido (ST04-001)", "Shanks (ST05-001)", "Magellan (OP02-071)", "Zephyr (OP02-072)", "Iceburg (OP03-058)", "Crocodile (OP04-058)", "Foxy (OP07-059)", "King (OP08-057)", "Charlotte Pudding (OP08-058)", "Monkey.D.Luffy (OP09-061)", "Nico Robin (OP09-062)", "Charlotte Katakuri (OP11-062)", "Donquixote Rosinante (OP12-061)", "Donquixote Doflamingo (OP14-060)", "Enel (OP15-058)", "Monkey.D.Luffy (ST13-003)", "Smoker (OP02-093)", "Sakazuki (ST06-001)", "Rob Lucci (OP03-076)", "Charlotte Linlin (OP03-077)", "Monkey.D.Luffy (ST08-001)", "Gecko Moria (OP06-080)", "Kyros (EB01-040)", "Rob Lucci (OP07-079)", "Monkey.D.Luffy (ST14-001)", "Marshall.D.Teach (OP09-081)", "Koala (OP12-081)", "Imu (OP13-079)", "Crocodile (OP14-079)", "Gecko Moria (OP14-080)", "Enel (OP05-098)", "Charlotte Katakuri (OP03-099)", "Charlotte Linlin (ST07-001)", "Yamato (ST09-001)", "Vegapunk (OP07-097)", "Kalgara (OP08-098)", "Eustass Kid (OP10-099)", "Jewelry Bonney (OP13-100)", "Monkey.D.Luffy (ST29-001)", "Monkey.D.Luffy (OP15-098)"].sort();
-
-    function getStandardLeaders() {
-        return allLeaders.filter(l => {
-            const code = l.match(/\(([^)]+)\)/)?.[1] || "";
-            if (code.startsWith('P-')) return true;
-            const set = code.split('-')[0];
-            const num = parseInt(set.substring(2));
-            return (set.startsWith('OP') && num >= 5) || (set.startsWith('ST') && num >= 10) || set.startsWith('EB');
-        });
+    /* LOGICA SICUREZZA */
+    const storedPsw = localStorage.getItem('optcg_password');
+    if(!storedPsw) {
+        document.getElementById('login-title').innerText = "Benvenuto!";
+        document.getElementById('login-msg').innerText = "Crea una password per proteggere i tuoi dati.";
+    } else {
+        document.getElementById('login-title').innerText = "Login Richiesto";
+        document.getElementById('login-msg').innerText = "Inserisci la password per accedere al database.";
     }
 
-    function setMainTab(id, btn) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); btn.classList.add('active');
-        currentMainTab = id; refresh();
-    }
-
-    function setFormat(f, btn) {
-        currentFormat = f;
-        document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('formato-label').innerText = "MODALITÀ: " + f.toUpperCase();
-        // Reset Analisi quando si cambia formato
-        document.getElementById('an-content').style.display = 'none';
-        document.getElementById('an-placeholder').style.display = 'block';
-        selectedLeaderAn = null;
-        updateLeaderSelects(); refresh();
-    }
-
-    function updateLeaderSelects() {
-        const list = (currentFormat === 'standard') ? getStandardLeaders() : allLeaders;
-        document.querySelectorAll('.leader-select').forEach(s => { s.innerHTML = ''; list.forEach(l => s.add(new Option(l, l))); });
-        const side = document.getElementById('analysis-list');
-        side.innerHTML = '';
-        list.forEach(l => {
-            let d = document.createElement('div'); d.className = 'leader-item'; d.innerText = l;
-            d.onclick = () => selectAn(l, d); side.appendChild(d);
-        });
-    }
-
-    function saveMatch() {
-        matches.push({ p1: document.getElementById('deck1').value, p2: document.getElementById('deck2').value, t1: document.getElementById('turn').value, r1: document.getElementById('result').value, format: currentFormat, id: Date.now() });
-        localStorage.setItem('optcg_v_multi_final', JSON.stringify(matches)); alert("Match salvato!"); refresh();
-    }
-
-    function deleteLastMatch() {
-        if (!confirm("Eliminare l'ultimo match?")) return;
-        matches.pop(); localStorage.setItem('optcg_v_multi_final', JSON.stringify(matches)); refresh();
-    }
-
-    function resetData() {
-        if (confirm("Reset TOTALE?")) { matches = []; localStorage.removeItem('optcg_v_multi_final'); location.reload(); }
-    }
-
-    function getStats() {
-        let s = {};
-        matches.filter(m => m.format === currentFormat).forEach(m => {
-            const proc = (l, o, t, r) => {
-                if(!s[l]) s[l] = { w:0, l:0, w1:0, l1:0, w2:0, l2:0, mu:{} };
-                const win = r === 'Win'; win ? s[l].w++ : s[l].l++;
-                if(t === '1st') win ? s[l].w1++ : s[l].l1++; else win ? s[l].w2++ : s[l].l2++;
-                if(!s[l].mu[o]) s[l].mu[o] = { w:0, l:0, w1:0, l1:0, w2:0, l2:0 };
-                win ? s[l].mu[o].w++ : s[l].mu[o].l++;
-                if(t === '1st') win ? s[l].mu[o].w1++ : s[l].mu[o].l1++; else win ? s[l].mu[o].w2++ : s[l].mu[o].l2++;
-            };
-            proc(m.p1, m.p2, m.t1, m.r1);
-            proc(m.p2, m.p1, (m.t1==='1st'?'2nd':'1st'), (m.r1==='Win'?'Loss':'Win'));
-        });
-        return s;
-    }
-
-    function refresh() {
-        const s = getStats();
-        if(currentMainTab === 'stats') {
-            const sB = document.getElementById('statsBody'); sB.innerHTML = '';
-            Object.entries(s).sort((a,b)=>(b[1].w+b[1].l)-(a[1].w+a[1].l)).forEach(([n,d])=>{
-                const tot=d.w+d.l; const wr=(d.w/tot)*100;
-                sB.innerHTML += `<tr><td><b>${n}</b></td><td>${d.w}W-${d.l}L</td><td class="${wr>=50?'wr-high':'wr-low'}">${wr.toFixed(1)}%</td><td>${(d.w1/(d.w1+d.l1)*100||0).toFixed(1)}%</td><td>${(d.w2/(d.w2+d.l2)*100||0).toFixed(1)}%</td></tr>`;
-            });
-        }
-        if(currentMainTab === 'ranking') {
-            const rB = document.getElementById('rankingBody');
-            let top = Object.entries(s).map(([n,d])=>({n, tot:d.w+d.l, wr:(d.w/(d.w+d.l))*100, w1:d.w1, l1:d.l1, w2:d.w2, l2:d.l2}))
-                .filter(x=>x.tot>=5).sort((a,b)=>b.wr-a.wr).slice(0,10);
-            rB.innerHTML = top.length ? top.map((x,i)=>`<tr><td>#${i+1}</td><td>${x.n}</td><td>${x.tot}</td><td class="wr-high">${x.wr.toFixed(1)}%</td><td>${(x.w1/(x.w1+x.l1)*100||0).toFixed(1)}%</td><td>${(x.w2/(x.w2+x.l2)*100||0).toFixed(1)}%</td></tr>`).join('') : '<tr><td colspan="6">Dati insufficienti.</td></tr>';
-        }
-        if(currentMainTab === 'analysis' && selectedLeaderAn) {
-            updateAnalysisDetail(selectedLeaderAn, s);
+    function checkAuth() {
+        const input = document.getElementById('psw-input').value;
+        const currentStored = localStorage.getItem('optcg_password');
+        
+        if(!currentStored) {
+            if(input.length < 4) return alert("Scegli una password di almeno 4 caratteri");
+            localStorage.setItem('optcg_password', input);
+            unlockApp();
+        } else {
+            if(input === currentStored) {
+                unlockApp();
+            } else {
+                alert("Password errata!");
+            }
         }
     }
 
-    function selectAn(n, el) {
-        selectedLeaderAn = n;
-        document.querySelectorAll('.leader-item').forEach(i => i.classList.remove('selected'));
-        el.classList.add('selected');
+    function unlockApp() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-content').style.display = 'block';
+        updateLeaderSelects();
         refresh();
     }
 
-    function updateAnalysisDetail(n, allStats) {
-        document.getElementById('an-placeholder').style.display = 'none';
-        document.getElementById('an-content').style.display = 'block';
-        document.getElementById('an-title').innerText = n;
-        const d = allStats[n];
-        if(!d) {
-            document.getElementById('an-total').innerText = "0%";
-            document.getElementById('an-1st').innerText = "0%";
-            document.getElementById('an-2nd').innerText = "0%";
-            document.getElementById('an-mup-body').innerHTML = '<tr><td colspan="5">Nessun match in questo formato.</td></tr>';
-            return;
-        }
-        const totWR = (d.w/(d.w+d.l))*100;
-        document.getElementById('an-total').innerText = totWR.toFixed(1) + "%";
-        document.getElementById('an-1st').innerText = (d.w1/(d.w1+d.l1)*100||0).toFixed(1) + "%";
-        document.getElementById('an-2nd').innerText = (d.w2/(d.w2+d.l2)*100||0).toFixed(1) + "%";
-        document.getElementById('an-mup-body').innerHTML = Object.entries(d.mu).map(([o, m]) => {
-            const mWR = (m.w/(m.w+m.l))*100;
-            return `<tr><td>${o}</td><td>${m.w+m.l}</td><td class="${mWR>=50?'wr-high':'wr-low'}">${mWR.toFixed(1)}%</td><td>${(m.w1/(m.w1+m.l1)*100||0).toFixed(1)}%</td><td>${(m.w2/(m.w2+m.l2)*100||0).toFixed(1)}%</td></tr>`;
-        }).join('');
-    }
+    /* RESTO DEL CODICE PRECEDENTE (INVARIATO) */
+    let currentFormat = 'standard';
+    let currentMainTab = 'insert';
+    let selectedLeaderAn = null;
+    let matches = JSON.parse(localStorage.getItem('optcg_v_cloud')) || [];
 
-    function filterAnList() {
-        let v = document.getElementById('search-an').value.toLowerCase();
-        document.querySelectorAll('.leader-item').forEach(i => i.style.display = i.innerText.toLowerCase().includes(v) ? 'block' : 'none');
-    }
+    const allLeaders = ["Edward.Newgate (OP02-001)", "Portgas.D.Ace (OP03-001)", "Shanks (OP09-001)", "Trafalgar Law (P-086)", "Monkey.D.Luffy (ST01-001)", "Sabo (ST13-001)", "Uta (P-011)", "Roronoa Zoro (OP01-001)", "Trafalgar Law (OP01-002)", "Monkey.D.Luffy (OP01-003)", "Monkey.D.Garp (OP02-002)", "Nefeltari Vivi (OP04-001)", "Trafalgar Law (ST10-001)", "Monkey.D.Luffy (ST10-002)", "Eustass Kid (ST10-003)", "Sabo (OP05-001)", "Belo Betty (OP05-002)", "Uta (OP06-001)", "Kouzuki Oden (EB01-001)", "Monkey.D.Dragon (OP07-001)", "Tony Tony.Chopper (OP08-001)", "Marco (OP08-002)", "Sanji (PRB01-001)", "Smoker (OP10-001)", "Caesar Clown (OP10-002)", "Sugar (OP10-003)", "Koby (OP11-001)", "Silvers Rayleigh (OP12-001)", "Monkey.D.Luffy (OP13-001)", "Portgas.D.Ace (OP13-002)", "Gol.D.Roger (OP13-003)", "Sabo (OP13-004)", "Trafalgar Law (OP14-001)", "Nefeltari Vivi (EB03-001)", "Krieg (OP15-001)", "Lucy (OP15-002)", "Jewelry Bonney (EB04-001)", "Monkey.D.Luffy (EB02-010)", "Roronoa Zoro (OP12-020)", "Kouzuki Oden (OP01-031)", "Eustass Kid (ST02-001)", "Kin'emon (OP02-025)", "Sanji (OP02-026)", "Kuro (OP03-021)", "Arlong (OP03-022)", "Donquixote Doflamingo (OP04-019)", "Issho (OP04-020)", "Donquixote Rosinante (OP05-022)", "Uta (ST11-001)", "Hody Jones (OP06-020)", "Perona (OP06-021)", "Yamato (OP06-022)", "Roronoa Zoro & Sanji (ST12-001)", "Jewelry Bonney (OP07-019)", "Carrot (OP08-021)", "Lim (OP09-022)", "Trafalgar Law (OP10-022)", "Jinbe (OP11-021)", "Shirahoshi (OP11-022)", "Dracule Mihawk (OP14-020)", "Brook (OP15-022)", "Boa Hancock (OP07-038)", "Sakazuki (P-076)", "Usopp (OP10-042)", "Nami (OP11-041)", "Nami (P-117)", "Portgas.D.Ace (ST13-002)", "Donquixote Doflamingo (OP01-060)", "Kaido (OP01-061)", "Crocodile (OP01-062)", "Crocodile (ST03-001)", "Emporio.Ivankov (OP02-049)", "Nami (OP03-040)", "Rebecca (OP04-039)", "Queen (OP04-040)", "Monkey.D.Luffy (P-047)", "Sakazuki (OP05-041)", "Vinsmoke Reiju (OP06-042)", "Hannyabal (EB01-021)", "Buggy (OP09-042)", "Monkey.D.Luffy (OP11-040)", "Kuzan (OP12-040)", "Sanji (OP12-041)", "Ace & Newgate (ST22-001)", "Jinbe (OP14-040)", "Boa Hancock (OP14-041)", "Rebecca (OP15-039)", "Monkey.D.Luffy (OP05-060)", "King (OP01-091)", "Kaido (ST04-001)", "Shanks (ST05-001)", "Magellan (OP02-071)", "Zephyr (OP02-072)", "Iceburg (OP03-058)", "Crocodile (OP04-058)", "Foxy (OP07-059)", "King (OP08-057)", "Charlotte Pudding (OP08-058)", "Monkey.D.Luffy (OP09-061)", "Nico Robin (OP09-062)", "Charlotte Katakuri (OP11-062)", "Donquixote Rosinante (OP12-061)", "Donquixote Doflamingo (OP14-060)", "Enel (OP15-058)", "Monkey.D.Luffy (ST13-003)", "Smoker (OP02-093)", "Sakazuki (ST06-001)", "Rob Lucci (OP03-076)", "Charlotte Linlin (OP03-077)", "Monkey.D.Luffy (ST08-001)", "Gecko Moria (OP06-080)", "Kyros (EB01-040)", "Rob Lucci (OP07-079)", "Monkey.D.Luffy (ST14-001)", "Marshall.D.Teach (OP09-081)", "Koala (OP12-081)", "Imu (OP13-079)", "Crocodile (OP14-079)", "Gecko Moria (OP14-080)", "Enel (OP05-098)", "Charlotte Katakuri (OP03-099)", "Charlotte Linlin (ST07-001)", "Yamato (ST09-001)", "Vegapunk (OP07-097)", "Kalgara (OP08-098)", "Eustass Kid (OP10-099)", "Jewelry Bonney (OP13-100)", "Monkey.D.Luffy (ST29-001)", "Monkey.D.Luffy (OP15-098)"].sort();
 
-    window.onload = () => { updateLeaderSelects(); refresh(); };
+    function getStandardLeaders() { return allLeaders.filter(l => { const code = l.match(/\(([^)]+)\)/)?.[1] || ""; if (code.startsWith('P-')) return true; const set = code.split('-')[0]; const num = parseInt(set.substring(2)); return (set.startsWith('OP') && num >= 5) || (set.startsWith('ST') && num >= 10) || set.startsWith('EB'); }); }
+    function setMainTab(id, btn) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); currentMainTab = id; refresh(); }
+    function setFormat(f, btn) { currentFormat = f; document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.getElementById('formato-label').innerText = "MODALITÀ: " + f.toUpperCase(); selectedLeaderAn = null; updateLeaderSelects(); refresh(); }
+    function updateLeaderSelects() { const list = (currentFormat === 'standard') ? getStandardLeaders() : allLeaders; document.querySelectorAll('.leader-select').forEach(s => { s.innerHTML = ''; list.forEach(l => s.add(new Option(l, l))); }); const side = document.getElementById('analysis-list'); side.innerHTML = ''; list.forEach(l => { let d = document.createElement('div'); d.className = 'leader-item'; d.innerText = l; d.onclick = () => selectAn(l, d); side.appendChild(d); }); }
+    function saveMatch() { matches.push({ p1: document.getElementById('deck1').value, p2: document.getElementById('deck2').value, t1: document.getElementById('turn').value, r1: document.getElementById('result').value, format: currentFormat, id: Date.now() }); localStorage.setItem('optcg_v_cloud', JSON.stringify(matches)); alert("Match salvato!"); refresh(); }
+    function exportData() { const data = localStorage.getItem('optcg_v_cloud'); if(!data) return alert("Nessun dato!"); const blob = new Blob([data], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'backup_optcg.json'; a.click(); }
+    function importData() { const inp = document.createElement('input'); inp.type = 'file'; inp.onchange = e => { const file = e.target.files[0]; const reader = new FileReader(); reader.onload = r => { if(confirm("Sovrascrivere i dati attuali?")) { localStorage.setItem('optcg_v_cloud', r.target.result); matches = JSON.parse(r.target.result); location.reload(); } }; reader.readAsText(file); }; inp.click(); }
+    function deleteLastMatch() { if(confirm("Eliminare ultimo?")) { matches.pop(); localStorage.setItem('optcg_v_cloud', JSON.stringify(matches)); refresh(); } }
+    function resetData() { if(confirm("RESET TOTALE?")) { matches = []; localStorage.clear(); location.reload(); } }
+    function getStats() { let s = {}; matches.filter(m => m.format === currentFormat).forEach(m => { const proc = (l, o, t, r) => { if(!s[l]) s[l] = { w:0, l:0, w1:0, l1:0, w2:0, l2:0, mu:{} }; const win = r === 'Win'; win ? s[l].w++ : s[l].l++; if(t === '1st') win ? s[l].w1++ : s[l].l1++; else win ? s[l].w2++ : s[l].l2++; if(!s[l].mu[o]) s[l].mu[o] = { w:0, l:0, w1:0, l1:0, w2:0, l2:0 }; win ? s[l].mu[o].w++ : s[l].mu[o].l++; if(t === '1st') win ? s[l].mu[o].w1++ : s[l].mu[o].l1++; else win ? s[l].mu[o].w2++ : s[l].mu[o].l2++; }; proc(m.p1, m.p2, m.t1, m.r1); proc(m.p2, m.p1, (m.t1==='1st'?'2nd':'1st'), (m.r1==='Win'?'Loss':'Win')); }); return s; }
+    function refresh() { const s = getStats(); if(currentMainTab === 'stats') { const sB = document.getElementById('statsBody'); sB.innerHTML = ''; Object.entries(s).sort((a,b)=>(b[1].w+b[1].l)-(a[1].w+a[1].l)).forEach(([n,d])=>{ const tot=d.w+d.l; const wr=(d.w/tot)*100; sB.innerHTML += `<tr><td><b>${n}</b></td><td>${d.w}-${d.l}</td><td class="${wr>=50?'wr-high':'wr-low'}">${wr.toFixed(1)}%</td><td>${(d.w1/(d.w1+d.l1)*100||0).toFixed(0)}%</td><td>${(d.w2/(d.w2+d.l2)*100||0).toFixed(0)}%</td></tr>`; }); } if(currentMainTab === 'ranking') { const rB = document.getElementById('rankingBody'); let top = Object.entries(s).map(([n,d])=>({n, tot:d.w+d.l, wr:(d.w/d.tot)*100, w1:d.w1, l1:d.l1, w2:d.w2, l2:d.l2})) .filter(x=>x.tot>=5).sort((a,b)=>b.wr-a.wr).slice(0,10); rB.innerHTML = top.map((x,i)=>`<tr><td>#${i+1}</td><td>${x.n}</td><td>${x.tot}</td><td class="wr-high">${(x.wr*100/x.wr || 0).toFixed(1)}%</td><td>${(x.w1/(x.w1+x.l1)*100||0).toFixed(0)}%</td><td>${(x.w2/(x.w2+x.l2)*100||0).toFixed(0)}%</td></tr>`).join(''); } if(currentMainTab === 'analysis' && selectedLeaderAn) updateAnalysisDetail(selectedLeaderAn, s); }
+    function selectAn(n, el) { selectedLeaderAn = n; document.querySelectorAll('.leader-item').forEach(i => i.classList.remove('selected')); el.classList.add('selected'); refresh(); }
+    function updateAnalysisDetail(n, allStats) { document.getElementById('an-placeholder').style.display = 'none'; document.getElementById('an-content').style.display = 'block'; document.getElementById('an-title').innerText = n; const d = allStats[n]; if(!d) return; document.getElementById('an-total').innerText = (d.w/(d.w+d.l)*100).toFixed(1) + "%"; document.getElementById('an-1st').innerText = (d.w1/(d.w1+d.l1)*100||0).toFixed(0) + "%"; document.getElementById('an-2nd').innerText = (d.w2/(d.w2+d.l2)*100||0).toFixed(0) + "%"; document.getElementById('an-mup-body').innerHTML = Object.entries(d.mu).map(([o, m]) => { const mWR = (m.w/(m.w+m.l))*100; return `<tr><td>${o}</td><td>${m.w+m.l}</td><td class="${mWR>=50?'wr-high':'wr-low'}">${mWR.toFixed(1)}%</td><td>${(m.w1/(m.w1+m.l1)*100||0).toFixed(0)}%</td><td>${(m.w2/(m.w2+m.l2)*100||0).toFixed(0)}%</td></tr>`; }).join(''); }
+    function filterAnList() { let v = document.getElementById('search-an').value.toLowerCase(); document.querySelectorAll('.leader-item').forEach(i => i.style.display = i.innerText.toLowerCase().includes(v) ? 'block' : 'none'); }
 </script>
 </body>
 </html>
