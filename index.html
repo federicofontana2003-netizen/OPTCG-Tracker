@@ -3,103 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OPTCG ANALYTICS</title>
+    <title>OPTCG ANALYTICS - CLOUD</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
         :root { --primary: #c62828; --gold: #f59e0b; --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --border: #334155; }
         body { font-family: sans-serif; margin: 0; background: var(--bg); color: var(--text); }
         
-        /* Overlay Password */
-        #lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-        .lock-box { background: var(--card); padding: 30px; border-radius: 12px; border: 2px solid var(--primary); text-align: center; }
+        /* Protezione Iniziale */
+        #lock { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        .lock-box { background: var(--card); padding: 30px; border-radius: 10px; border: 2px solid var(--primary); text-align: center; }
 
-        .header { background: var(--primary); padding: 15px; text-align: center; border-bottom: 3px solid var(--gold); }
-        .container { padding: 15px; display: none; }
-        
-        .main-tabs { display: flex; gap: 5px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: #334155; color: white; font-weight: bold; cursor: pointer; }
-        .tab-btn.active { background: var(--gold); color: #000; }
+        .header { background: var(--primary); padding: 20px; text-align: center; border-bottom: 4px solid var(--gold); }
+        .container { max-width: 1200px; margin: auto; padding: 20px; display: none; }
 
-        .sub-tabs { display: flex; gap: 5px; margin-bottom: 15px; justify-content: center; }
-        .sub-btn { padding: 8px 20px; border: 1px solid var(--border); background: #1e293b; color: white; cursor: pointer; }
-        .sub-btn.active { border-color: var(--gold); color: var(--gold); }
+        /* TABS PRINCIPALI */
+        .main-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: #334155; color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .tab-btn.active { background: var(--gold); color: black; }
+
+        /* FORMATO STANDARD / ETERNO */
+        .format-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .format-btn { padding: 10px 30px; border: 1px solid var(--border); background: #1e293b; color: white; cursor: pointer; }
+        .format-btn.active { border-color: var(--gold); color: var(--gold); }
 
         .page { display: none; }
         .page.active { display: block; }
 
-        select, input { width: 100%; padding: 12px; margin: 10px 0; background: #0b1120; color: white; border: 1px solid var(--border); }
-        .btn-save { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
-        th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
-        th { color: var(--gold); }
+        select, input { width: 100%; padding: 15px; margin: 10px 0; background: #0b1120; color: white; border: 1px solid var(--border); box-sizing: border-box; }
+        .btn-action { background: var(--primary); color: white; border: none; padding: 20px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
 
-        .analysis-grid { display: grid; grid-template-columns: 250px 1fr; gap: 15px; }
-        .leader-list { background: #0b1120; height: 500px; overflow-y: auto; padding: 10px; border: 1px solid var(--border); }
-        .leader-item { padding: 8px; cursor: pointer; border-bottom: 1px solid #1e293b; font-size: 0.8rem; }
-        .leader-item:hover { background: var(--primary); }
-        .leader-item.selected { background: var(--gold); color: black; }
+        table { width: 100%; border-collapse: collapse; background: #0b1120; }
+        th, td { padding: 12px; border: 1px solid var(--border); text-align: left; }
+        th { background: #1e293b; color: var(--gold); }
+
+        /* ANALISI LEADER (LAYOUT ORIGINALE) */
+        .analysis-container { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+        .leader-sidebar { background: #0b1120; height: 600px; overflow-y: auto; border: 1px solid var(--border); }
+        .leader-row { padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 0.9rem; }
+        .leader-row:hover { background: var(--primary); }
+        .leader-row.selected { background: var(--gold); color: black; }
+        
+        .stat-card { background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid var(--gold); }
     </style>
 </head>
 <body>
 
-<div id="lock-screen">
+<div id="lock">
     <div class="lock-box">
-        <h2 style="color:var(--gold)">ACCESSO CLOUD</h2>
-        <input type="password" id="master-psw" placeholder="Password...">
-        <button class="btn-save" onclick="unlock()">ENTRA</button>
+        <h2 style="color:var(--gold)">OPTCG ANALYTICS</h2>
+        <input type="password" id="pass" placeholder="Master Password">
+        <button class="btn-action" onclick="access()">SBLOCCA CLOUD</button>
     </div>
 </div>
 
-<div class="header"><h1>OPTCG ANALYTICS</h1></div>
+<div class="header"><h1>🏴‍☠️ OPTCG ANALYTICS SYSTEM</h1></div>
 
-<div id="main-content" class="container">
+<div id="main" class="container">
     <div class="main-tabs">
-        <button class="tab-btn active" onclick="tab('insert', this)">INSERISCI</button>
-        <button class="tab-btn" onclick="tab('db', this)">DATABASE</button>
-        <button class="tab-btn" onclick="tab('top', this)">TOP 10</button>
-        <button class="tab-btn" onclick="tab('an', this)">ANALISI</button>
+        <button class="tab-btn active" onclick="showPage('insert', this)">Inserisci</button>
+        <button class="tab-btn" onclick="showPage('database', this)">Database</button>
+        <button class="tab-btn" onclick="showPage('ranking', this)">Ranking</button>
+        <button class="tab-btn" onclick="showPage('analysis', this)">Analisi</button>
     </div>
 
-    <div class="sub-tabs">
-        <button class="sub-btn active" onclick="format('std', this)">STANDARD</button>
-        <button class="sub-btn" onclick="format('etc', this)">ETERNO</button>
+    <div class="format-bar">
+        <button class="format-btn active" onclick="setFormat('standard', this)">STANDARD</button>
+        <button class="format-btn" onclick="setFormat('eterno', this)">ETERNO</button>
     </div>
 
     <div id="insert" class="page active">
-        <label>Tuo Leader</label><select id="p1" class="l-list"></select>
-        <label>Avversario</label><select id="p2" class="l-list"></select>
+        <label>Tuo Leader (P1)</label><select id="deck1" class="l-select"></select>
+        <label>Leader Avversario (P2)</label><select id="deck2" class="l-select"></select>
         <div style="display:flex; gap:10px;">
-            <select id="turn"><option>1st</option><option>2nd</option></select>
-            <select id="res"><option>Win</option><option>Loss</option></select>
+            <select id="turn"><option value="1st">1st Turn</option><option value="2nd">2nd Turn</option></select>
+            <select id="res"><option value="Win">Vittoria</option><option value="Loss">Sconfitta</option></select>
         </div>
-        <button class="btn-save" onclick="sendData()">SALVA NEL CLOUD</button>
-        <p id="cloud-status" style="text-align:center; font-size:0.7rem; color:gray; margin-top:10px;">Cloud Sincronizzato</p>
+        <button class="btn-action" onclick="cloudSave()">SALVA NEL CLOUD GOOGLE</button>
+        <p id="sync-info" style="text-align:center; font-size:0.8rem; color:gray; margin-top:10px;">Sincronizzazione Cloud attiva</p>
     </div>
 
-    <div id="db" class="page">
+    <div id="database" class="page">
         <table>
-            <thead><tr><th>Leader</th><th>W-L</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead>
+            <thead><tr><th>Leader</th><th>W-L</th><th>WR %</th><th>1st WR</th><th>2nd WR</th></tr></thead>
             <tbody id="db-body"></tbody>
         </table>
     </div>
 
-    <div id="top" class="page">
+    <div id="ranking" class="page">
         <table>
-            <thead><tr><th>#</th><th>Leader</th><th>Match</th><th>WinRate</th></tr></thead>
-            <tbody id="top-body"></tbody>
+            <thead><tr><th>Pos</th><th>Leader</th><th>Match</th><th>Win Rate</th></tr></thead>
+            <tbody id="rank-body"></tbody>
         </table>
     </div>
 
-    <div id="an" class="page">
-        <div class="analysis-grid">
-            <div class="leader-list" id="an-sidebar"></div>
-            <div id="an-detail">
-                <h3 id="an-name" style="color:var(--gold)">Seleziona un Leader</h3>
-                <div id="an-stats"></div>
+    <div id="analysis" class="page">
+        <div class="analysis-container">
+            <div class="leader-sidebar" id="side-list"></div>
+            <div class="analysis-content">
+                <div id="an-header" class="stat-card">Seleziona un leader dalla lista a sinistra</div>
                 <table>
-                    <thead><tr><th>Contro</th><th>M</th><th>WR%</th></tr></thead>
+                    <thead><tr><th>Matchup VS</th><th>M</th><th>WR%</th><th>1st</th><th>2nd</th></tr></thead>
                     <tbody id="an-body"></tbody>
                 </table>
             </div>
@@ -108,7 +112,7 @@
 </div>
 
 <script>
-    // --- FIREBASE FEDERICO ---
+    // FIREBASE CONFIG (Tuoi dati originali)
     const firebaseConfig = {
         apiKey: "AIzaSyCLoFyNXaHvtbnCfH40o8qqwjy0RO95NgQ",
         authDomain: "optcg-tracker-225de.firebaseapp.com",
@@ -118,104 +122,121 @@
         appId: "1:397158081205:web:8d5b5385df720d1aaad4fc",
         databaseURL: "https://optcg-tracker-225de-default-rtdb.europe-west1.firebasedatabase.app"
     };
+
     firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    const cloud = firebase.database();
 
     let matches = [];
-    let curFormat = 'std';
-    let selLeader = null;
+    let currentFormat = 'standard';
+    let selectedAnLeader = null;
 
-    // --- FUNZIONI CORE ---
-    function unlock() {
-        const p = document.getElementById('master-psw').value;
-        const s = localStorage.getItem('psw');
-        if(!s) { localStorage.setItem('psw', p); start(); }
-        else if(p === s) start();
-        else alert("Errata");
+    // SISTEMA ACCESSO
+    function access() {
+        const p = document.getElementById('pass').value;
+        const s = localStorage.getItem('master_psw');
+        if(!s) { localStorage.setItem('master_psw', p); entry(); }
+        else if(p === s) entry();
+        else alert("Password Errata");
     }
 
-    function start() {
-        document.getElementById('lock-screen').style.display = 'none';
-        document.getElementById('main-content').style.display = 'block';
-        loadLeaders();
-        syncCloud();
-    }
-
-    function syncCloud() {
-        database.ref('matches').on('value', (snap) => {
-            matches = snap.val() ? Object.values(snap.val()) : [];
+    function entry() {
+        document.getElementById('lock').style.display = 'none';
+        document.getElementById('main').style.display = 'block';
+        initLeaders();
+        cloud.ref('matches').on('value', (s) => {
+            matches = s.val() ? Object.values(s.val()) : [];
             render();
         });
     }
 
-    function sendData() {
-        const m = {
-            p1: document.getElementById('p1').value,
-            p2: document.getElementById('p2').value,
+    function cloudSave() {
+        const data = {
+            p1: document.getElementById('deck1').value,
+            p2: document.getElementById('deck2').value,
             t: document.getElementById('turn').value,
             r: document.getElementById('res').value,
-            f: curFormat
+            f: currentFormat,
+            ts: Date.now()
         };
-        database.ref('matches').push(m);
-        alert("Salvato!");
+        cloud.ref('matches').push(data);
+        alert("Dato salvato nel Cloud!");
     }
 
-    // --- LOGICA INTERFACCIA (ESATTAMENTE COME PRIMA) ---
-    function tab(id, btn) {
+    // LOGICA INTERFACCIA
+    function showPage(id, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         btn.classList.add('active');
     }
 
-    function format(f, btn) {
-        curFormat = f;
-        document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+    function setFormat(f, btn) {
+        currentFormat = f;
+        document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         render();
     }
 
-    const leaders = ["Edward.Newgate (OP02-001)", "Portgas.D.Ace (OP03-001)", "Shanks (OP09-001)", "Rob Lucci (OP07-079)", "Enel (OP05-098)", "Bonney (OP07-019)", "Boa Hancock (OP07-038)", "Trafalgar Law (ST10-001)", "Charlotte Katakuri (OP03-099)"].sort();
+    const leaders = ["Edward.Newgate (OP02-001)", "Portgas.D.Ace (OP03-001)", "Shanks (OP09-001)", "Rob Lucci (OP07-079)", "Enel (OP05-098)", "Bonney (OP07-019)", "Boa Hancock (OP07-038)", "Katakuri (OP03-099)", "Trafalgar Law (ST10-001)", "Doflamingo (OP01-060)"].sort();
 
-    function loadLeaders() {
-        const sels = document.querySelectorAll('.l-list');
-        const side = document.getElementById('an-sidebar');
+    function initLeaders() {
+        const sels = document.querySelectorAll('.l-select');
+        const side = document.getElementById('side-list');
         leaders.forEach(l => {
             sels.forEach(s => s.add(new Option(l, l)));
-            let d = document.createElement('div');
-            d.className = 'leader-item';
-            d.innerText = l;
-            d.onclick = () => { selLeader = l; render(); };
-            side.appendChild(d);
+            let div = document.createElement('div');
+            div.className = 'leader-row';
+            div.innerText = l;
+            div.onclick = () => { selectedAnLeader = l; render(); };
+            side.appendChild(div);
         });
     }
 
     function render() {
-        const fMatches = matches.filter(m => m.f === curFormat);
+        const filtered = matches.filter(m => m.f === currentFormat);
         let stats = {};
 
-        fMatches.forEach(m => {
-            const process = (l, o, r, t) => {
+        filtered.forEach(m => {
+            const up = (l, o, r, t) => {
                 if(!stats[l]) stats[l] = {w:0, l:0, w1:0, l1:0, w2:0, l2:0, mu:{}};
                 r === 'Win' ? stats[l].w++ : stats[l].l++;
                 if(t === '1st') r === 'Win' ? stats[l].w1++ : stats[l].l1++;
                 else r === 'Win' ? stats[l].w2++ : stats[l].l2++;
-                if(!stats[l].mu[o]) stats[l].mu[o] = {w:0, l:0};
+                
+                if(!stats[l].mu[o]) stats[l].mu[o] = {w:0, l:0, w1:0, l1:0, w2:0, l2:0};
                 r === 'Win' ? stats[l].mu[o].w++ : stats[l].mu[o].l++;
+                if(t === '1st') r === 'Win' ? stats[l].mu[o].w1++ : stats[l].mu[o].l1++;
+                else r === 'Win' ? stats[l].mu[o].w2++ : stats[l].mu[o].l2++;
             };
-            process(m.p1, m.p2, m.r, m.t);
-            process(m.p2, m.p1, (m.r==='Win'?'Loss':'Win'), (m.t==='1st'?'2nd':'1st'));
+            up(m.p1, m.p2, m.r, m.t);
+            up(m.p2, m.p1, (m.r==='Win'?'Loss':'Win'), (m.t==='1st'?'2nd':'1st'));
         });
 
-        // DB Render
+        // RENDER DATABASE
         const dbBody = document.getElementById('db-body');
         dbBody.innerHTML = '';
-        Object.entries(stats).forEach(([n, d]) => {
+        Object.entries(stats).forEach(([name, d]) => {
             const wr = (d.w/(d.w+d.l)*100).toFixed(1);
-            dbBody.innerHTML += `<tr><td>${n}</td><td>${d.w}-${d.l}</td><td>${wr}%</td><td>${(d.w1/(d.w1+d.l1)*100||0).toFixed(0)}%</td><td>${(d.w2/(d.w2+d.l2)*100||0).toFixed(0)}%</td></tr>`;
+            dbBody.innerHTML += `<tr><td>${name}</td><td>${d.w}-${d.l}</td><td>${wr}%</td><td>${(d.w1/(d.w1+d.l1)*100||0).toFixed(0)}%</td><td>${(d.w2/(d.w2+d.l2)*100||0).toFixed(0)}%</td></tr>`;
         });
 
-        // Altre tabelle (Top 10 e Analisi) seguono la stessa logica...
+        // RENDER RANKING
+        const rankBody = document.getElementById('rank-body');
+        rankBody.innerHTML = '';
+        Object.entries(stats).sort((a,b) => (b[1].w/(b[1].w+b[1].l)) - (a[1].w/(a[1].w+a[1].l))).slice(0,10).forEach(([n, d], i) => {
+            rankBody.innerHTML += `<tr><td>${i+1}</td><td>${n}</td><td>${d.w+d.l}</td><td>${(d.w/(d.w+d.l)*100).toFixed(1)}%</td></tr>`;
+        });
+
+        // RENDER ANALISI
+        if(selectedAnLeader && stats[selectedAnLeader]) {
+            const s = stats[selectedAnLeader];
+            document.getElementById('an-header').innerHTML = `<h2>${selectedAnLeader}</h2><p>Win Rate Totale: ${(s.w/(s.w+s.l)*100).toFixed(1)}% (${s.w}W - ${s.l}L)</p>`;
+            const anBody = document.getElementById('an-body');
+            anBody.innerHTML = '';
+            Object.entries(s.mu).forEach(([opp, d]) => {
+                anBody.innerHTML += `<tr><td>${opp}</td><td>${d.w+d.l}</td><td>${(d.w/(d.w+d.l)*100).toFixed(1)}%</td><td>${d.w1}-${d.l1}</td><td>${d.w2}-${d.l2}</td></tr>`;
+            });
+        }
     }
 </script>
 </body>
